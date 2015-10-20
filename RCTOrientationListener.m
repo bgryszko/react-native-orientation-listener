@@ -18,7 +18,7 @@
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceOrientationDidChange:) name:@"UIDeviceOrientationDidChangeNotification" object:nil];
     }
     return self;
-    
+
 }
 
 - (void)dealloc
@@ -28,58 +28,77 @@
 
 - (void)deviceOrientationDidChange:(NSNotification *)notification
 {
-    
+
     UIDevice *currentDevice = [UIDevice currentDevice];
     UIDeviceOrientation orientation = [currentDevice orientation];
-    
+
     NSString *orientationStr;
+    NSString *preciseOrientationStr;
     switch (orientation) {
         case UIDeviceOrientationPortrait:
+            preciseOrientationStr = @"PORTRAIT";
+            orientationStr = @"PORTRAIT";
+            break;
         case UIDeviceOrientationPortraitUpsideDown:
+            preciseOrientationStr = @"PORTRAIT-UPSIDE-DOWN";
             orientationStr = @"PORTRAIT";
             break;
         case UIDeviceOrientationLandscapeLeft:
+            preciseOrientationStr = @"LANDSCAPE-LEFT";
+            orientationStr = @"LANDSCAPE";
+            break;
         case UIDeviceOrientationLandscapeRight:
+            preciseOrientationStr = @"LANDSCAPE-RIGHT";
             orientationStr = @"LANDSCAPE";
             break;
         default:
+            preciseOrientationStr = @"UNKNOWN";
             orientationStr = @"UNKNOWN";
             break;
     }
-    
+
     NSString *deviceStr = [currentDevice model];
-    
+
     [_bridge.eventDispatcher sendDeviceEventWithName:@"orientationDidChange"
-                                                body:@{@"orientation": orientationStr,@"device": deviceStr}];
+                                                body:@{@"preciseOrientation": preciseOrientationStr, @"orientation": orientationStr, @"device": deviceStr}];
 }
 
 RCT_EXPORT_MODULE();
 
 RCT_EXPORT_METHOD(getOrientation:(RCTResponseSenderBlock)callback)
 {
-    
+
     UIDevice *currentDevice = [UIDevice currentDevice];
     UIDeviceOrientation orientation = [currentDevice orientation];
-    
+
     NSString *orientationStr;
+    NSString *preciseOrientationStr;
     switch (orientation) {
         case UIDeviceOrientationPortrait:
+            preciseOrientationStr = @"PORTRAIT";
+            orientationStr = @"PORTRAIT";
+            break;
         case UIDeviceOrientationPortraitUpsideDown:
+            preciseOrientationStr = @"PORTRAIT-UPSIDE-DOWN";
             orientationStr = @"PORTRAIT";
             break;
         case UIDeviceOrientationLandscapeLeft:
+            preciseOrientationStr = @"LANDSCAPE-LEFT";
+            orientationStr = @"LANDSCAPE";
+            break;
         case UIDeviceOrientationLandscapeRight:
-            
+            preciseOrientationStr = @"LANDSCAPE-RIGHT";
             orientationStr = @"LANDSCAPE";
             break;
         default:
+            preciseOrientationStr = @"UNKNOWN";
             orientationStr = @"UNKNOWN";
             break;
     }
-    
+
     NSString *deviceStr = [currentDevice model];
-    
-    NSArray *orientationArray = @[orientationStr, deviceStr];
+
+    NSArray *orientationArray = @[orientationStr, deviceStr, preciseOrientationStr];
     callback(orientationArray);
 }
 
